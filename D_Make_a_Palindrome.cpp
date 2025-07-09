@@ -21,8 +21,8 @@ using namespace std;
 #define pb push_back
 #define allof(x) (x).begin(), (x).end()
 #define loop(a,b) for(int i = a; i<b; i++)
-#define haan cout << "Yes" << endl
-#define nahn cout << "No" << endl
+#define haan cout << "YES" << endl
+#define nahn cout << "NO" << endl
 #define ppc  __builtin_popcountll
 #define msb  63-__builtin_clzll
 
@@ -65,26 +65,83 @@ v1d sieve(lol n){
                                     } 
     return primes;}
 
+
+v1d lcs(v1d a,v1d b) {
+    int m = a.size(), n = b.size();
+    v2d dp(m + 1,v1d(n + 1, 0));
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (a[i - 1] == b[j - 1])
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    v1d lcs;
+    lol i = m, j = n;
+    while (i > 0 && j > 0) {
+        if (a[i - 1] == b[j - 1]) {
+            lcs.push_back(a[i - 1]);
+            --i; --j;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+            --i;
+        } else {
+            --j;
+        }
+    }
+
+    reverse(lcs.begin(), lcs.end());
+    return lcs;
+}
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------
 void runtestcases(){
-    lol lr,hr; cin>>lr>>hr;
-    lol ls,hs; cin>>ls>>hs;
+    int n,k; cin>>n>>k;
+    v1d nums= getvec(n);
 
-    lol x1,y1,x2,y2; cin>>x1>>y1>>x2>>y2;
+    map<int,int> mop;
 
-    if(x1>x2) swap(x1,x2);
-    if(x1 + ls <= x2){
-        if((x2 - x1 - ls) % ls == 0){ haan; return; }
+    for(auto i : nums) mop[i]++;
+
+    int tot = 0;
+    unordered_set<int> sat;
+
+    int largest = 0;
+
+    for(auto i : mop){
+        if(tot >= k) break;
+        tot += i.second;
+        sat.insert(i.first); 
+        largest = i.first;
     }
-    if(y1>y2) swap(y1,y2);
-    if(y1 + hs <= y2){
-        if((y2 - y1 - hs) % hs == 0){ haan; return; }
+
+    v1d simp;
+
+    for(auto i : nums){
+        if(sat.count(i)) simp.push_back(i);
     }
-    nahn;
+
+    // print(simp);
+
+    int rem = simp.size() - k + 1;
+    // cout<<rem<<endl;
+    int l = 0;
+    int r = simp.size() - 1;
+
+    while( l <= r){
+        if(simp[l] == simp[r]){l++; r--; continue;}
+        rem--;
+        if(rem < 0) {nahn;return;}
+        if(simp[l] > simp[r]){if(simp[l] != largest) {nahn;return;}     l++;}
+        else {if(simp[r] != largest) {nahn;return;}     r--;}
+    }
+    haan;
+    
 
     
+
+
 
 
 

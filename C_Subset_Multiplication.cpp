@@ -21,8 +21,8 @@ using namespace std;
 #define pb push_back
 #define allof(x) (x).begin(), (x).end()
 #define loop(a,b) for(int i = a; i<b; i++)
-#define haan cout << "Yes" << endl
-#define nahn cout << "No" << endl
+#define haan cout << "YES" << endl
+#define nahn cout << "NO" << endl
 #define ppc  __builtin_popcountll
 #define msb  63-__builtin_clzll
 
@@ -65,26 +65,38 @@ v1d sieve(lol n){
                                     } 
     return primes;}
 
+int hcfcal(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+int lcm(int a, int b) {
+    return (a / hcfcal(a, b)) * b;
+}
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------
 void runtestcases(){
-    lol lr,hr; cin>>lr>>hr;
-    lol ls,hs; cin>>ls>>hs;
+    int n; cin>>n;
 
-    lol x1,y1,x2,y2; cin>>x1>>y1>>x2>>y2;
+    v1d nums = getvec(n);
+    v1d hcf;
 
-    if(x1>x2) swap(x1,x2);
-    if(x1 + ls <= x2){
-        if((x2 - x1 - ls) % ls == 0){ haan; return; }
+    for(int i = 0; i<n-1; i++) hcf.pb(nums[i] / hcfcal(nums[i], nums[i+1]));
+
+    int ans = 1;
+
+    for(int i = 0; i<n-1; i++){
+        ans = lcm(ans, hcf[i]);
     }
-    if(y1>y2) swap(y1,y2);
-    if(y1 + hs <= y2){
-        if((y2 - y1 - hs) % hs == 0){ haan; return; }
-    }
-    nahn;
+    cout<<ans<<endl;
 
     
+
+
 
 
 

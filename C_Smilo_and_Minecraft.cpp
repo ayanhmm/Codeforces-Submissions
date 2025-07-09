@@ -21,13 +21,13 @@ using namespace std;
 #define pb push_back
 #define allof(x) (x).begin(), (x).end()
 #define loop(a,b) for(int i = a; i<b; i++)
-#define haan cout << "Yes" << endl
-#define nahn cout << "No" << endl
+#define haan cout << "YES" << endl
+#define nahn cout << "NO" << endl
 #define ppc  __builtin_popcountll
 #define msb  63-__builtin_clzll
 
 typedef long long lol;
-typedef vector<lol> v1d;
+typedef vector<char> v1d;
 typedef vector<v1d> v2d;
 typedef vector<v2d> v3d;
 typedef priority_queue<lol, v1d, greater<lol>> minh; 
@@ -40,13 +40,14 @@ void print(v1d nums){
 }
 void print(v2d nums){
     for(int i=0; i<nums.size(); i++) print(nums[i]);
+    cout<<endl;
     return;
 }
 
 v1d getvec(int size){
-    vector<lol> ans;
+    v1d ans;
     while(size--){
-        lol temp; cin>>temp; ans.push_back(temp);
+        char temp; cin>>temp; ans.push_back(temp);
     }
     return ans;
 }
@@ -67,22 +68,71 @@ v1d sieve(lol n){
 
 #pragma endregion
 
+int n,m;
+pair<int,int> clamp(int x, int y){
+    if(x < 0) x = 0;
+    if(x > n-1) x = n-1;
+    if(y < 0) y = 0;
+    if(y > m-1) y=  m-1;
+    return {x, y};
+
+}
+
 // ---------------------------------------------------------------------------------------------
 void runtestcases(){
-    lol lr,hr; cin>>lr>>hr;
-    lol ls,hs; cin>>ls>>hs;
+    int k; cin>>n>>m>>k;
 
-    lol x1,y1,x2,y2; cin>>x1>>y1>>x2>>y2;
+    v2d nums = getvec(n, m);
 
-    if(x1>x2) swap(x1,x2);
-    if(x1 + ls <= x2){
-        if((x2 - x1 - ls) % ls == 0){ haan; return; }
+    k--;
+
+    int total = 0;
+
+    print(nums);
+
+    queue<pair<int, int>> q;
+    vector<vector<lol>> yo(n, vector<lol>(m, 0));
+    for(int i = 0; i<n; i++){
+        for(int j = 0; j<m; j++){
+            if(nums[i][j] == '.'){
+                q.push({i, j});
+            }
+            int i2 = max(0, i-1);
+            int j2 = max(0, j-1);
+
+            yo[i][j] = yo[i2][j] + yo[i][j2];
+            if(nums[i][j] == 'g'){
+                total++;
+                yo[i][j]++;
+            }
+        }
     }
-    if(y1>y2) swap(y1,y2);
-    if(y1 + hs <= y2){
-        if((y2 - y1 - hs) % hs == 0){ haan; return; }
+
+    int ans = n*m;
+
+    while(!q.empty()){
+        auto [x, y] = q.front(); q.pop();
+        if(nums[x][y] != '.') continue;
+
+        pair<int,int> p1 = clamp(x-k, y-k);
+        int x1,y1;
+        x1 = p1.first;
+        y1 = p1.second;
+        pair<int,int> p2 = clamp(x-k, y-k);
+        int x2,y2;
+        x2 = p2.first;
+        y2 = p2.second;
+
+        int g = yo[x2][y2] - yo[x1-1][y2] - yo[x2][y1-1] + yo[x1-1][y1-1];
+
+        ans = min(ans, g);
+
+
     }
-    nahn;
+
+    cout<<total - ans<<endl;
+
+
 
     
 
